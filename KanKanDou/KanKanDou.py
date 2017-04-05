@@ -28,3 +28,5 @@ if __name__ == '__main__':
     wbdata = requests.get(url, cookies=cookie).text
     soup = BeautifulSoup(wbdata, 'lxml')
     print(soup)
+
+    

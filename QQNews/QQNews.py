@@ -16,7 +16,7 @@ if __name__ == '__main__':
     res = requests.get(url).text
     # 对获取到的文本进行解析
     soup = BeautifulSoup(res, 'html.parser')
-    print (soup)
+    print soup.prettify()
     # 从解析文件中通过select选择器定位指定的元素，返回一个列表
     news_titles = soup.select("div.text > em.f14 > a.linkto")
 
@@ -29,4 +29,4 @@ if __name__ == '__main__':
             '标题': title,
             '链接': link
         }
-        print(data)
+        # print(data)
