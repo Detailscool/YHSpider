@@ -7,11 +7,19 @@ import csv
 import sys
 import datetime
 from time import time
+from pybloomfilter import BloomFilter
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def request(url, currentIndex):
+download_bf = BloomFilter(1024*1024*16, 0.01)
+
+def request(url, isFirstPage):
+    if url not in download_bf:
+        download_bf.add(url)
+    else:
+        return
+
     res = requests.get(url).text
     soup = BeautifulSoup(res, 'html.parser')
     # print soup.prettify()
@@ -67,12 +75,11 @@ def request(url, currentIndex):
                         str += types.text + ' '
                     house_type = str.strip()
                     # print house_type
-                else:
-                    if type(t) is not type(None):
+                elif type(t) is not type(None):
                         house_type = t.text
                 # print house_type
                 break
-            if i == len(house_type) - 1 :
+            if i == len(house_type) - 1:
                 house_type = None
 
         price_txt = house.find_all(name='p', class_='price-txt') #价格描述#
@@ -109,13 +116,13 @@ def request(url, currentIndex):
 
         writer.writerow([district_name, sub_district, house_name, house_status, house_address, house_type, price_txt, house_price, dynamic, tel, house_link])
 
-    pages_select = soup.select('div.pagination')
-    for pages in pages_select:
-        page = pages.find_all(name='a')
-        if currentIndex + 1 < len(page):
-            currentIndex += 1
-            next_url = page[currentIndex].attrs['href']  # , '\n', page
-            request(next_url, currentIndex)
+    if isFirstPage:
+        pages_select = soup.select('div.pagination')
+        for pages in pages_select:
+            page = pages.find_all(name='a')
+            for i in range(len(page)):
+                next_url = page[i].attrs['href']  # , '\n', page
+                request(next_url, False)
 
 if __name__ == '__main__':
 
@@ -139,7 +146,7 @@ if __name__ == '__main__':
         url = district.attrs['href']
         district_name = district.string
         # if index == 0:
-        request(url, -1)
+        request(url, True)
 
         # print '%s - %s' % (district_name, url)
         # # if index == 0:
