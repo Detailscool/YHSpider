@@ -3,25 +3,45 @@
 
 import requests
 from bs4 import BeautifulSoup
-# from tornado import torfec
+from selenium.webdriver.common.by import By
 from selenium import webdriver
+import time
+import re
+
+def get_job_info():
+    start = time.time()
+
+    job_list = soup.select('div.dw_table')
+    # print 'job_list ：', job_list
+    for job in job_list:
+        job_titles = job.find_all(name='a', class_='zw-name')
+        job_degrees = job.find_all(name='span', class_='t2')
+        job_areas = job.find_all(name='span', class_='t3')
+        job_salaries = job.find_all(name='span', class_='t4')
+        job_time = job.find_all(name='span', class_='t5')
+        for title, degree, area, salary, distribute_time in zip(job_titles, job_degrees, job_areas, job_salaries, job_time):
+            print title.get_text(), '-', degree.get_text(), '-', area.get_text(), '-', salary.get_text(), '-',distribute_time.get_text(), '-', title.attrs['href']
+
+    current_page = soup.select('li.on')[-1]
+    current_page = int(current_page.get_text())
+    next_page = soup.select('li.bk > a')[0].attrs['href']
+    next_page = int(re.findall('\d+', next_page)[-1])
+
+    print current_page, '-', next_page, '-', (current_page==next_page)
+
+    print '耗时：', time.time() - start
 
 if __name__ == '__main__':
     url = r'http://jobs.51job.com/all/co3919935.html'
-    cookie = '''adv=adsnew%3D1%26%7C%26adsresume%3D1%26%7C%26adsfrom%3Dhttp%253A%252F%252Fbzclk.baidu.com%252Fadrc.php%253Ft%253D06KL00c00fZEOkb0cPuy00uiAsKInxwm000002Rh_W300000j9TeBb.THYdnyGEm_Xs_t1rLV5Z0A3qmh7GuZR0T1Y4mWwBmWmdPW0snj03uHbL0ZRqf1DvnjDdnjN7rDPDfYfLP1F7wjmdPjnYPYmvPjuKn1f0mHdL5iuVmv-b5Hc4nWmvnHf3n1mhTZFEuA-b5HDv0ARqpZwYTjCEQLwzmyP-QWRkphqBQhPEUiqYTh7Wui4spZ0Omyw1UMNV5HT3rHc1nzu9pM0qmR9inAPDULunnvf1uZbYnRdgTZuupHNJmWcsI-0zyM-BnW04yydAT7GcNMI-u1YqFh_qnARkPHcYPjFbrAFWrHRsuHR4PhFWPjmkryPhrHKhuhc0mLFW5HDzPWnL%2526tpl%253Dtpl_10085_14394_1%2526l%253D1051862693%2526attach%253Dlocation%25253D%252526linkName%25253D%252525E6%252525A0%25252587%252525E9%252525A2%25252598%252526linkText%25253D%252525E5%25252589%2525258D%252525E7%252525A8%2525258B%252525E6%25252597%252525A0%252525E5%252525BF%252525A7%252851Job%2529-%252525E6%25252589%252525BE%252525E5%252525B7%252525A5%252525E4%252525BD%2525259C%252525E5%252525B0%252525BD%252525E5%2525259C%252525A8%252525E5%25252589%2525258D%252525E7%252525A8%2525258B%252525E6%25252597%252525A0%252526xp%25253Did%2528%25252522ecf8aae%25252522%2529%2525252FDIV%2525255B1%2525255D%2525252FDIV%2525255B1%2525255D%2525252FDIV%2525255B1%2525255D%2525252FDIV%2525255B1%2525255D%2525252FH2%2525255B1%2525255D%2525252FA%2525255B1%2525255D%252526linkType%25253D%252526checksum%25253D16%2526ie%253DUTF-8%2526f%253D8%2526tn%253Dbaidu%2526wd%253D51job%2525E5%252589%25258D%2525E7%2525A8%25258B%2525E6%252597%2525A0%2525E5%2525BF%2525A7%2526rqlang%253Dcn%26%7C%26adsnum%3D789233; guid=14923984315782070069; 51job=cenglish%3D0; slife=lastvisit%3D150200; search=jobarea%7E%60030200%2C040000%7C%21ord_field%7E%600%7C%21recentSearch0%7E%601%A1%FB%A1%FA030200%2C040000%2C00%A1%FB%A1%FA000000%A1%FB%A1%FA0000%A1%FB%A1%FA32%2C03%2C62%A1%FB%A1%FA9%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA%A1%FB%A1%FA1%A1%FB%A1%FA%A1%FB%A1%FA-1%A1%FB%A1%FA1493802338%A1%FB%A1%FA0%A1%FB%A1%FA%A1%FB%A1%FA%7C%21recentSearch1%7E%601%A1%FB%A1%FA000000%2C00%A1%FB%A1%FA000000%A1%FB%A1%FA0000%A1%FB%A1%FA00%A1%FB%A1%FA9%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA99%A1%FB%A1%FA%C9%EE%DB%DA%C8%FD%B4%FA%C8%CB%BF%C6%BC%BC%D3%D0%CF%DE%B9%AB%CB%BE%A1%FB%A1%FA2%A1%FB%A1%FA%A1%FB%A1%FA-1%A1%FB%A1%FA1492398440%A1%FB%A1%FA0%A1%FB%A1%FA%A1%FB%A1%FA%7C%21; nsearch=jobarea%3D%26%7C%26ord_field%3D%26%7C%26recentSearch0%3D%26%7C%26recentSearch1%3D%26%7C%26recentSearch2%3D%26%7C%26recentSearch3%3D%26%7C%26recentSearch4%3D%26%7C%26collapse_expansion%3D'''
 
     header = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36',
-        'Connection': 'keep-alive',
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept - Encoding': 'gzip, deflate, sdch',
-        'Cookie': cookie
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36'
     }
 
     wbdata = requests.get(url, headers=header).content
     soup = BeautifulSoup(wbdata, 'lxml')
     print soup.prettify()
 
-    job_list = soup.select('div.dw_table')
-    print 'job_list ：', job_list
+    get_job_info()
+
 
