@@ -3,7 +3,6 @@
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import requests
 import time
 import re
 import csv
@@ -57,7 +56,7 @@ class JobCrawler(object):
             job_salaries = job.find_all(name='span', class_='t4')
             job_time = job.find_all(name='span', class_='t5')
             for title, degree, area, salary, distribute_time in zip(job_titles, job_degrees, job_areas, job_salaries, job_time):
-                # print title.get_text(), '-', degree.get_text(), '-', area.get_text(), '-', salary.get_text(), '-',distribute_time.get_text(), '-', title.attrs['href']
+                print title.get_text(), '-', degree.get_text(), '-', area.get_text(), '-', salary.get_text(), '-',distribute_time.get_text(), '-', title.attrs['href']
                 self.__writer.writerow(['', '', '', '', title.get_text(), degree.get_text(), area.get_text(), salary.get_text(), distribute_time.get_text(), title.attrs['href']])
 
         current_page = soup.select('li.on')
@@ -81,7 +80,7 @@ class JobCrawler(object):
             # print 'next: ', next, len(next)
             if next:
                 next[-1].click()
-                time.sleep(0.1)
+                time.sleep(0.5)
                 bs = BeautifulSoup(self.__driver.page_source, 'lxml')
                 self.__get_job(bs)
 
@@ -92,9 +91,7 @@ class JobCrawler(object):
 
         self.__driver.get(url)
 
-        wbdata = requests.get(url, headers=header)
-        wbdata.encoding ='gb18030'
-        soup = BeautifulSoup(wbdata.text, 'html.parser')
+        soup = BeautifulSoup(self.__driver.page_source, 'html.parser')
         self.__get_job(soup)
 
 # Test

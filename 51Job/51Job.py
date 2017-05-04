@@ -16,7 +16,9 @@ def get_company_info(url, page=1):
 
     wbdata = requests.get(url).content
     soup = BeautifulSoup(wbdata, 'lxml')
+
     # print soup.prettify()
+    
     company_list = soup.select('div.el > span.t2')
     # print type(company_list), '\ncompany_list :', company_list
     for index, company in enumerate(company_list):
