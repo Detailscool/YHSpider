@@ -3,10 +3,7 @@
 
 import requests
 from bs4 import BeautifulSoup
-import re
-from multiprocessing import Pool
 from JobCrawler import JobCrawler
-import sys
 from pybloomfilter import BloomFilter
 from time import time
 
