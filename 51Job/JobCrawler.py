@@ -81,7 +81,7 @@ class JobCrawler(object):
             # print 'next: ', next, len(next)
             if next:
                 next[-1].click()
-                time.sleep(1)
+                time.sleep(0.1)
                 bs = BeautifulSoup(self.__driver.page_source, 'lxml')
                 self.__get_job(bs)
 
