@@ -58,7 +58,7 @@ class JobCrawler(object):
             job_time = job.find_all(name='span', class_='t5')
             for title, degree, area, salary, distribute_time in zip(job_titles, job_degrees, job_areas, job_salaries, job_time):
                 # print title.get_text(), '-', degree.get_text(), '-', area.get_text(), '-', salary.get_text(), '-',distribute_time.get_text(), '-', title.attrs['href']
-                self.__writer.writerow(['', '', '', '', title.get_text(), degree.get_text(), area.get_text(), salary.get_text(),distribute_time.get_text(), title.attrs['href']])
+                self.__writer.writerow(['', '', '', '', title.get_text(), degree.get_text(), area.get_text(), salary.get_text(), distribute_time.get_text(), title.attrs['href']])
 
         current_page = soup.select('li.on')
         next_page = soup.select('li.bk > a')

@@ -8,9 +8,10 @@ from pybloomfilter import BloomFilter
 from time import time
 
 company_bf = BloomFilter(1024*1024*16, 0.01)
+total_page = 1
 
 def get_company(url, page=1):
-    if page > 1:
+    if page > total_page:
         return len(company_bf)
 
     wbdata = requests.get(url).content
@@ -39,12 +40,11 @@ def get_company(url, page=1):
     print 'next_page_link :', next_page_link
     get_company(next_page_link, page+1)
 
-
 if __name__ == '__main__':
     start = time()
 
     url = 'http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=030200%2C040000&industrytype=32%2C03%2C62&keywordtype=1&lang=c&stype=2&postchannel=0000&fromType=1&confirmdate=9'
     count = get_company(url)
 
-    print '总共%s间公司，总耗时：%s' % (count, time() - start)
+    print '总共 %s 间公司, 共 % s页，总耗时：%s' % (count, total_page, time() - start)
 
