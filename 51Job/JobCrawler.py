@@ -56,7 +56,7 @@ class JobCrawler(object):
             job_salaries = job.find_all(name='span', class_='t4')
             job_time = job.find_all(name='span', class_='t5')
             for title, degree, area, salary, distribute_time in zip(job_titles, job_degrees, job_areas, job_salaries, job_time):
-                print title.get_text(), '-', degree.get_text(), '-', area.get_text(), '-', salary.get_text(), '-',distribute_time.get_text(), '-', title.attrs['href']
+                # print title.get_text(), '-', degree.get_text(), '-', area.get_text(), '-', salary.get_text(), '-',distribute_time.get_text(), '-', title.attrs['href']
                 self.__writer.writerow(['', '', '', '', title.get_text(), degree.get_text(), area.get_text(), salary.get_text(), distribute_time.get_text(), title.attrs['href']])
 
         current_page = soup.select('li.on')
@@ -85,10 +85,6 @@ class JobCrawler(object):
                 self.__get_job(bs)
 
     def get_job_info(self, url):
-        header = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36'
-        }
-
         self.__driver.get(url)
 
         soup = BeautifulSoup(self.__driver.page_source, 'html.parser')
