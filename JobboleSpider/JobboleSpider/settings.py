@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 # Scrapy settings for JobboleSpider project
 #
 # For simplicity, this file contains only settings considered important or
@@ -64,9 +66,20 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'JobboleSpider.pipelines.JobbolespiderPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   # 'JobboleSpider.pipelines.JobbolespiderPipeline': 300,
+   #  'scrapy.pipelines.images.ImagesPipeline': 1,
+    'JobboleSpider.pipelines.JobboleImagePipeline': 300,
+}
+
+'''Item的下载图片url字段'''
+IMAGES_URLS_FIELD = 'front_image_url'
+'''下载图片保存的路径'''
+IMAGES_STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'images')
+#  '''下载图片的最小高度'''
+#  IMAGES_MIN_HEIGHT = 100
+#  '''下载图片的最小宽度'''
+#  IMAGES_MIN_WIDTH = 100
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

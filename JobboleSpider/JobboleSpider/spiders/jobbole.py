@@ -4,6 +4,8 @@ import re
 import urlparse
 from scrapy.http import Request
 
+from JobboleSpider.items import JobboleItem
+from JobboleSpider.utils import common
 
 class JobboleSpider(scrapy.Spider):
     name = "jobbole"
@@ -44,7 +46,11 @@ class JobboleSpider(scrapy.Spider):
         # tags = ",".join(tag_list)
 
         # 通过css选择器提取字段
-        front_image_url = response.meta.get("front_image_url", "")  #文章封面图
+        front_image_url = response.meta.get("front_image_url", "").encode('utf-8')  #文章封面图
+        if front_image_url.startswith('//'):
+            front_image_url.replace('//', '')
+        if not front_image_url.startswith('http://'):
+            front_image_url = 'http://' + front_image_url
         title = response.css(".entry-header h1::text").extract()[0]
         create_date = response.css("p.entry-meta-hide-on-mobile::text").extract_first().strip().encode('utf-8').replace('·', '').strip()
         praise_nums = response.css(".vote-post-up h10::text").extract()[0]
@@ -68,4 +74,17 @@ class JobboleSpider(scrapy.Spider):
         tag_list = response.css("p.entry-meta-hide-on-mobile a::text").extract()
         tag_list = [element for element in tag_list if not element.encode('utf-8').strip().endswith("评论")]
         tags = ",".join(tag_list)
-        pass
+
+        jobbole_item = JobboleItem()
+        jobbole_item['title'] = title
+        jobbole_item['create_date'] = create_date
+        jobbole_item['url'] = response.url
+        jobbole_item['url_object_id'] = common.get_md5(response.url)
+        jobbole_item['front_image_url'] = [front_image_url]
+        jobbole_item['praise_nums'] = praise_nums
+        jobbole_item['comment_nums'] = comment_nums
+        jobbole_item['fav_nums'] = fav_nums
+        jobbole_item['tags'] = tags
+        jobbole_item['content'] = content
+
+        yield jobbole_item
