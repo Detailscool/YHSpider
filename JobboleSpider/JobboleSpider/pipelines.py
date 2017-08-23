@@ -8,7 +8,6 @@
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exporters import JsonItemExporter
 from twisted.enterprise import adbapi
-from datetime import datetime
 
 import codecs
 import json
@@ -50,18 +49,12 @@ class MysqlTwistedPipline(object):
 
     def handle_error(self, failure, item, spider):
         #处理异步插入的异常
-        print failure
+        print 'failure：', failure
 
     def do_insert(self, cursor, item):
         #执行具体的插入
         #根据不同的item 构建不同的sql语句并插入到mysql中
-        # insert_sql, params = item.get_insert_sql()
-        insert_sql = """
-                    INSERT INTO jobbole(title, url, url_object_id, create_date, fav_nums)
-                    VALUES (%s, %s, %s, %s, %s)
-        """
-        date = datetime.strptime(item['create_date'], '%Y/%m/%d').date()
-        params = (item['title'], item['url'], item['url_object_id'], date, item['fav_nums'])
+        insert_sql, params = item.get_insert_sql()
         cursor.execute(insert_sql, params)
 
 class JsonWithEncodingPipeline(object):
