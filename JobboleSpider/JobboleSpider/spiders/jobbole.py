@@ -51,10 +51,10 @@ class JobboleSpider(scrapy.Spider):
             front_image_url.replace('//', '')
         if not front_image_url.startswith('http://'):
             front_image_url = 'http://' + front_image_url
-        title = response.css(".entry-header h1::text").extract()[0]
+        title = response.css(".entry-header h1::text").extract()[0].encode('utf-8')
         create_date = response.css("p.entry-meta-hide-on-mobile::text").extract_first().strip().encode('utf-8').replace('·', '').strip()
-        praise_nums = response.css(".vote-post-up h10::text").extract()[0]
-        fav_nums = response.css(".bookmark-btn::text").extract()[0]
+        praise_nums = int(response.css(".vote-post-up h10::text").extract()[0])
+        fav_nums = int(response.css(".bookmark-btn::text").extract()[0])
         match_re = re.match(".*?(\d+).*", fav_nums)
         if match_re:
             fav_nums = int(match_re.group(1))
@@ -72,7 +72,7 @@ class JobboleSpider(scrapy.Spider):
         content = ''.join(content).encode('utf-8')
 
         tag_list = response.css("p.entry-meta-hide-on-mobile a::text").extract()
-        tag_list = [element for element in tag_list if not element.encode('utf-8').strip().endswith("评论")]
+        tag_list = [element.encode('utf-8') for element in tag_list if not element.encode('utf-8').strip().endswith("评论")]
         tags = ",".join(tag_list)
 
         jobbole_item = JobboleItem()
