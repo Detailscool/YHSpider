@@ -67,8 +67,9 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   # 'JobboleSpider.pipelines.JobbolespiderPipeline': 300,
+   # 'JobboleSpider.pipelines.JsonWithEncodingPipeline': 2,
    #  'scrapy.pipelines.images.ImagesPipeline': 1,
+    'JobboleSpider.pipelines.JsonExpoerterPipeline': 3,
     'JobboleSpider.pipelines.JobboleImagePipeline': 300,
 }
 
