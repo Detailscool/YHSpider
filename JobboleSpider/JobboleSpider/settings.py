@@ -70,7 +70,8 @@ ITEM_PIPELINES = {
    # 'JobboleSpider.pipelines.JsonWithEncodingPipeline': 2,
    #  'scrapy.pipelines.images.ImagesPipeline': 1,
    #  'JobboleSpider.pipelines.JsonExpoerterPipeline': 3,
-    'JobboleSpider.pipelines.MysqlTwistedPipline': 4,
+    'JobboleSpider.pipelines.CsvExpoerterPipeline': 3,
+   #  'JobboleSpider.pipelines.MysqlTwistedPipline': 4,
     #'JobboleSpider.pipelines.JobboleImagePipeline': 1,
 }
 
@@ -105,6 +106,6 @@ IMAGES_STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'images'
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 MYSQL_HOST = "127.0.0.1"
-MYSQL_DBNAME = "Jobbole"
+MYSQL_DBNAME = "spider"
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "root"
