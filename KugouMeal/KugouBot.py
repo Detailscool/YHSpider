@@ -7,7 +7,6 @@
 from threading import Thread
 from wxbot import *
 
-
 class KugouBot(WXBot):
 
     _instance = None
