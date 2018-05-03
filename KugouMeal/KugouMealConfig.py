@@ -6,10 +6,14 @@
 
 import ConfigParser
 from datetime import datetime
+import sys
+import codecs
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class KugouMealConfig(object):
-
     config = ConfigParser.ConfigParser()
 
     def get_wechat_name(self):
@@ -46,7 +50,9 @@ class KugouMealConfig(object):
             self.__update_config('latestupdate', date=datetime.now().strftime('%Y-%m-%d'))
 
     def update_order(self, selected_restaurant, selected_meal):
-        self.__update_config('ordermeal', meal=selected_restaurant+' - '+selected_meal)
+        order = str(selected_restaurant + ' - ' + selected_meal)
+        print '更新config:', order
+        self.__update_config('ordermeal', meal=order)
 
     def has_ordered(self):
         date_str = self.__get_config('latestupdate', 'date')
@@ -54,20 +60,24 @@ class KugouMealConfig(object):
         return date_str == now
 
     def __get_config(self, section, item):
-        self.config.read('conf.ini')
+        self.config.readfp(codecs.open('conf.ini', 'r', 'utf-8-sig'))
         for _section in self.config.sections():
             if _section == section:
                 for _item, value in self.config.items(section):
                     if _item == item:
                         return value
 
-
     def __update_config(self, section, **kwargs):
+        if not kwargs.keys() or not section:
+            return
+
         file_name = 'conf.ini'
-        self.config.read(file_name)
+        fp = codecs.open(file_name, 'r', 'utf-8-sig')
+        self.config.readfp(fp)
         for _section in self.config.sections():
             if _section == section:
                 for key, value in kwargs.items():
                     self.config.set(section, key, value)
-        self.config.write(open(file_name, 'r+'))
-
+                break
+        # self.config.write(fp)
+        fp.close()

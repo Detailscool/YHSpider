@@ -19,25 +19,16 @@ class KugouMeal(object):
         self.login_password = login_password
         self.selected_dict = selected_dict
 
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        self.driver = webdriver.Chrome(chrome_options=chrome_options)
+
     def get_random_meal(self):
         selected_restaurant = random.choice(self.selected_dict.keys())
         selected_meal = random.choice(self.selected_dict[selected_restaurant])
         return selected_restaurant, selected_meal
 
-
-    headers = {
-        'User-Agent': UserAgent().random,
-        'Connection': 'keep-alive',
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'host': 'opd.kugou.net'
-    }
-
-    for key, item in headers.items():
-        webdriver.DesiredCapabilities.PHANTOMJS['phantomjs.page.customHeaders.{}'.format(key)] = item
-
-    driver = webdriver.PhantomJS()
     url = 'http://opd.kugou.net/common/signin.php?url=http%3A%2F%2Fopd.kugou.net%2Fmeal%2F%3Fsource%3Doa'
-
 
     def select_meal(self):
         selected_restaurant, selected_meal = self.get_random_meal()
@@ -58,13 +49,12 @@ class KugouMeal(object):
                     tds = soup.select('table tbody tr td')
                     for i in range(1, len(tds), 5):
                         if tds[i].get_text().encode('utf-8').strip() == selected_meal:
-                            book_button = book_buttons[i+3].find_elements_by_css_selector('input')
+                            book_button = book_buttons[i + 3].find_elements_by_css_selector('input')
                             book_button[0].click()
                             return True, selected_restaurant, selected_meal
-                        # print tds[i].get_text()
+                            # print tds[i].get_text()
                     break
         return False, None, None
-
 
     def start(self):
         self.driver.get(self.url)
@@ -83,10 +73,13 @@ class KugouMeal(object):
             meal_url = self.driver.current_url
             if self.login_name.lower() not in meal_url:
                 print '账号密码不对'
-                sys.exit()
+                sys.exit(1)
 
             while True:
                 has_selected, selected_restaurant, selected_meal = self.select_meal()
                 if has_selected and selected_restaurant and selected_meal:
                     return selected_restaurant, selected_meal
                 self.driver.get(meal_url)
+
+    def __del__(self):
+        self.driver.close()
