@@ -14,16 +14,17 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-def create_story(summary_text, work_time_text, req_text):
+def create_story(summary_text, work_time_text, REQ=None):
     new_button = driver.find_element_by_id('create_link')
     new_button.click()
     time.sleep(0.5)
 
-    inputs = driver.find_elements_by_class_name('drop-menu')
-    if len(inputs) < 6:
+    drop_menus = driver.find_elements_by_class_name('drop-menu')
+    if len(drop_menus) < 6:
+        print '出错啦'
         sys.exit(1)
 
-    project = inputs[0]
+    project = drop_menus[0]
     project.click()
     time.sleep(0.5)
 
@@ -42,11 +43,11 @@ def create_story(summary_text, work_time_text, req_text):
     summary.send_keys(unicode(summary_text))
     time.sleep(0.5)
 
-    sprint = inputs[5]
+    sprint = drop_menus[5]
     sprint.click()
-    sprint_groups = [a for a in driver.find_elements_by_css_selector('li a.aui-list-item-link') if u'手机iOS直播服务组' in a.text]
+    sprint_groups = [a for a in driver.find_elements_by_css_selector('li a.aui-list-item-link') if u'iOS直播服务组' in a.text]
     if sprint_groups:
-        sprint_groups[0].click()
+        sprint_groups[-1].click()
         time.sleep(0.5)
 
     test_type = Select(driver.find_element_by_id('customfield_10200'))
@@ -64,50 +65,56 @@ def create_story(summary_text, work_time_text, req_text):
     code = driver.find_element_by_id('customfield_10503-3')
     code.click()
 
-    question = driver.find_element_by_id('issuelinks-issues-textarea')
-    question.send_keys(unicode(req_text))
+    if REQ:
+        question = driver.find_element_by_id('issuelinks-issues-textarea')
+        question.send_keys(unicode(REQ))
 
     submit = driver.find_element_by_id('create-issue-submit')
     submit.click()
-    time.sleep(0.5)
+    time.sleep(2)
+
+    print '已建: ', summary_text, ', 时长， :', work_time_text, '天'
 
 
 if __name__ == '__main__':
-    login_name = sys.argv[1]
-    login_password = sys.argv[2]
-    file_path = sys.argv[3]
+    login_token = sys.argv[1]
+    file_path = sys.argv[2]
 
     if not os.path.exists(file_path):
+        print '出错啦'
         sys.exit(1)
     else:
         with open(file_path, 'r') as f:
             lines = f.readlines()
             f.close()
 
+    if '-' not in login_token:
+        print '出错啦'
+        sys.exit(1)
+    elif len(login_token.split('-')[-1]) != 32:
+        print '出错啦'
+        sys.exit(1)
+
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--headless')
     driver = webdriver.Chrome(chrome_options=chrome_options)
+
     url = ''
 
     driver.get(url)
-    name = driver.find_element_by_id('userName')
-    password = driver.find_element_by_id('userPwd')
-    loginbutton = driver.find_element_by_xpath('/html/body/form/div[2]/div[4]/button')
-    name.send_keys(login_name)
-    password.send_keys(login_password)
-    loginbutton.click()
-    time.sleep(0.5)
-
-    print driver.current_url
-
-    if login_name.lower() not in url:
-        print '账号密码不对'
-        sys.exit(1)
     # print driver.get_cookies()
 
     for line in lines:
-        words = line.strip().split(',')
-        if len(words) == 3:
-            create_story(words[0].strip(), words[1].strip(), words[2].strip())
+        if '，' in line and ',' not in line:
+            words = line.encode('utf-8').strip().split('，')
+        elif ',' in line and '，' not in line:
+            words = line.encode('utf-8').strip().split(',')
+        else:
+            words = []
+
+        if len(words) == 2:
+            create_story(summary_text=words[0].strip(), work_time_text=words[1].strip())
+        elif len(words) == 3:
+            create_story(summary_text=words[0].strip(), work_time_text=words[1].strip(), REQ=words[2].strip())
 
     driver.close()
