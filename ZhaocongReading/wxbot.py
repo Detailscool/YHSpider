@@ -17,6 +17,7 @@ import random
 from traceback import format_exc
 from requests.exceptions import ConnectionError, ReadTimeout
 import HTMLParser
+from datetime import datetime
 
 UNKONWN = 'unkonwn'
 SUCCESS = '200'
@@ -805,12 +806,12 @@ class WXBot:
                     elif selector == '0':  # 无事件
                         pass
                     else:
-                        print '[DEBUG] sync_check:', retcode, selector
+                        print datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '  [DEBUG] sync_check:', retcode, selector
                         r = self.sync()
                         if r is not None:
                             self.handle_msg(r)
                 else:
-                    print '[DEBUG] sync_check:', retcode, selector
+                    print datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '  [DEBUG] sync_check:', retcode, selector
                     time.sleep(10)
                 self.schedule()
             except:
