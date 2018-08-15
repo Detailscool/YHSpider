@@ -81,9 +81,10 @@ def create_story(**kwargs):
     sprint.click()
     sprint_groups = []
     while not sprint_groups:
-        time.sleep(1)
-        sprint_groups = [a for a in driver.find_elements_by_css_selector('li a') if u'iOS直播服务组' in a.text]
+        time.sleep(0.5)
+        sprint_groups = [a for a in driver.find_elements_by_css_selector('li a') if u'iOS直播服务组' in a.text and u'在用' in a.text]
     sprint_groups[0].click()
+    time.sleep(0.5)
 
     # time.sleep(15)
 

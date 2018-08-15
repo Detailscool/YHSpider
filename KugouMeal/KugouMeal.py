@@ -20,7 +20,7 @@ class KugouMeal(object):
         self.selected_dict = selected_dict
 
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
+        # chrome_options.add_argument('--headless')
         self.driver = webdriver.Chrome(chrome_options=chrome_options)
 
     def get_random_meal(self):
@@ -48,7 +48,7 @@ class KugouMeal(object):
                     soup = BeautifulSoup(self.driver.page_source, 'html.parser')
                     tds = soup.select('table tbody tr td')
                     for i in range(1, len(tds), 5):
-                        if tds[i].get_text().encode('utf-8').strip() == selected_meal:
+                        if selected_meal in tds[i].get_text().encode('utf-8').strip():
                             book_button = book_buttons[i + 3].find_elements_by_css_selector('input')
                             book_button[0].click()
                             return True, selected_restaurant, selected_meal
@@ -68,7 +68,7 @@ class KugouMeal(object):
             password_field.send_keys(self.login_password)
             login_button.click()
 
-            time.sleep(1)
+            time.sleep(2)
 
             meal_url = self.driver.current_url
             if self.login_name.lower() not in meal_url:
