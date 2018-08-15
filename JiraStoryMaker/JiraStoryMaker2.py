@@ -82,15 +82,8 @@ def create_story(**kwargs):
     sprint_groups = []
     while not sprint_groups:
         time.sleep(1)
-        sprint_groups = [a.text for a in driver.find_elements_by_css_selector('li a') if u'iOS直播服务组' in a.text]
-    sprint_field = driver.find_element_by_id('customfield_10004-field')
-    if sprint_field:
-        sprint_text = sprint_groups[0]
-        regx = re.findall("( \(.*\))", sprint_text)
-        if regx:
-            sprint_text = sprint_text.replace(regx[0], '').strip()
-        sprint_field.send_keys(sprint_text)
-        time.sleep(0.5)
+        sprint_groups = [a for a in driver.find_elements_by_css_selector('li a') if u'iOS直播服务组' in a.text]
+    sprint_groups[0].click()
 
     # time.sleep(15)
 
