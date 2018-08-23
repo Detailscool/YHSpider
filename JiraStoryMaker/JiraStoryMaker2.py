@@ -4,14 +4,16 @@
 # Created by Henry on 2018/4/9
 # Description :
 
-import time
-import sys
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
-import re
 import os
 import json
+import time
+import sys
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -23,10 +25,14 @@ def create_story(**kwargs):
     REQ = kwargs.get('REQ', None)
     isFirst = kwargs.get('isFirst', False)
 
-    new_button = driver.find_element_by_id('create_link')
-    new_button.click()
     time.sleep(2)
 
+    new_button = driver.find_element_by_css_selector('#create_link')
+    new_button.click()
+
+    WebDriverWait(driver, 10000).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, 'span.drop-menu'))
+    )
     drop_menus = driver.find_elements_by_css_selector('span.drop-menu')
 
     if isFirst:
@@ -82,7 +88,7 @@ def create_story(**kwargs):
     sprint_groups = []
     while not sprint_groups:
         time.sleep(0.5)
-        sprint_groups = [a for a in driver.find_elements_by_css_selector('li a') if u'iOS直播服务组' in a.text and u'在用' in a.text]
+        sprint_groups = [a for a in driver.find_elements_by_css_selector('li a') if group in a.text and u'在用' in a.text]
     sprint_groups[0].click()
     time.sleep(0.5)
 
@@ -109,8 +115,10 @@ def create_story(**kwargs):
 
     submit = driver.find_element_by_id('create-issue-submit')
     submit.click()
-    time.sleep(2)
 
+    WebDriverWait(driver, 10000).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '#aui-flag-container div div a'))
+    )
     story = driver.find_element_by_css_selector('#aui-flag-container div div a')
     story_href = story.get_attribute('href')
     print summary_text, ': ', story_href
@@ -146,7 +154,7 @@ if __name__ == '__main__':
     driver.get(url)
     # print driver.get_cookies()
 
-    time.sleep(2)
+    group = u'iOS直播服务组'
 
     for idx, line in enumerate(lines):
         if '，' in line and ',' not in line:
