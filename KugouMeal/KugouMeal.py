@@ -28,7 +28,7 @@ class KugouMeal(object):
         selected_meal = random.choice(self.selected_dict[selected_restaurant])
         return selected_restaurant, selected_meal
 
-    url = 'http://opd.kugou.net/common/signin.php?url=http%3A%2F%2Fopd.kugou.net%2Fmeal%2F%3Fsource%3Doa'
+    url = ''
 
     def select_meal(self):
         selected_restaurant, selected_meal = self.get_random_meal()
@@ -59,9 +59,9 @@ class KugouMeal(object):
     def start(self):
         self.driver.get(self.url)
 
-        login_field = self.driver.find_element_by_id('login_name')
-        password_field = self.driver.find_element_by_id('login_password')
-        login_button = self.driver.find_element_by_xpath('/html/body/div[2]/div/div[2]/form/button')
+        login_field = self.driver.find_element_by_id('userName')
+        password_field = self.driver.find_element_by_id('userPwd')
+        login_button = self.driver.find_element_by_xpath('//*[@id="login_tab_content"]/div[1]/div[3]/button')
 
         if login_field and password_field and login_button:
             login_field.send_keys(self.login_name)

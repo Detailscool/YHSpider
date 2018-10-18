@@ -25,7 +25,7 @@ def create_story(**kwargs):
     REQ = kwargs.get('REQ', None)
     isFirst = kwargs.get('isFirst', False)
 
-    time.sleep(2)
+    time.sleep(1)
 
     new_button = driver.find_element_by_css_selector('#create_link')
     new_button.click()
@@ -68,7 +68,7 @@ def create_story(**kwargs):
             sys.exit(1)
 
     test_type = Select(driver.find_element_by_id('customfield_10200'))
-    test_type.select_by_value('10200')
+    test_type.select_by_value('10202')
     time.sleep(0.5)
 
     requirement = Select(driver.find_element_by_id('customfield_10101'))
@@ -116,9 +116,11 @@ def create_story(**kwargs):
     submit = driver.find_element_by_id('create-issue-submit')
     submit.click()
 
-    WebDriverWait(driver, 10000).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, '#aui-flag-container div div a'))
-    )
+    # WebDriverWait(driver, 10000).until(
+    #     EC.text_to_be_present_in_element_value((By.CSS_SELECTOR, '#aui-flag-container div div a'), summary_text)
+    # )
+    time.sleep(2)
+
     story = driver.find_element_by_css_selector('#aui-flag-container div div a')
     story_href = story.get_attribute('href')
     print summary_text, ': ', story_href
