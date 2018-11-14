@@ -113,23 +113,30 @@ def create_story(**kwargs):
             dev_person.send_keys(login_token.split('-')[0])
             time.sleep(0.5)
 
+        tester_person = driver.find_element_by_css_selector('#customfield_10400_container textarea')
+        if tester_person and tester:
+            tester_person.send_keys(tester)
+            time.sleep(0.5)
+
     submit = driver.find_element_by_id('create-issue-submit')
     submit.click()
 
-    # WebDriverWait(driver, 10000).until(
-    #     EC.text_to_be_present_in_element_value((By.CSS_SELECTOR, '#aui-flag-container div div a'), summary_text)
-    # )
-    time.sleep(2)
+    WebDriverWait(driver, 10000).until(
+        EC.element_to_be_clickable((By.XPATH, '//*[@id="aui-flag-container"]/div/div/a'))
+    )
 
-    story = driver.find_element_by_css_selector('#aui-flag-container div div a')
+    story = driver.find_element_by_xpath('//*[@id="aui-flag-container"]/div/div/a')
     story_href = story.get_attribute('href')
     print summary_text, ': ', story_href
     # print '已建: ', summary_text, ', 时长， :', work_time_text, '天'
+
+    driver.refresh()
 
 
 if __name__ == '__main__':
     login_token = sys.argv[1]
     file_path = sys.argv[2]
+    tester = sys.argv[3]
 
     if not os.path.exists(file_path):
         print '出错啦'
